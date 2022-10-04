@@ -26,3 +26,19 @@ app.get('/talker', async (_request, response) => {
     console.log(error);
   }
 });
+
+app.get('/talker/:id', async (request, response) => {
+  try {
+    const { id } = request.params;
+    const talker = await talkerData();
+    const talkerWithID = talker.find((t) => Number(t.id) === Number(id));
+
+    if (!talkerWithID) {
+      return response.status(404).json({ message: 'Pessoa palestrante não encontrada' });      
+    } 
+      response.status(HTTP_OK_STATUS).json(talkerWithID);
+  } catch (error) {
+    response.status(400).json(error);
+    console.log(error);
+  }
+});
