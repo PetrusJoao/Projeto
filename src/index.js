@@ -1,9 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const talkerData = require('./fsUtils');
+const randomToken = require('./autentications/Tolken');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(express.json());
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
@@ -37,6 +39,18 @@ app.get('/talker/:id', async (request, response) => {
       return response.status(404).json({ message: 'Pessoa palestrante não encontrada' });      
     } 
       response.status(HTTP_OK_STATUS).json(talkerWithID);
+  } catch (error) {
+    response.status(400).json(error);
+    console.log(error);
+  }
+});
+
+app.post('/login', (_request, response) => {
+  try {
+    // const login = request.body;
+    const token = randomToken();
+    response.status(200).json({ token });
+    // console.log(tolken.length);
   } catch (error) {
     response.status(400).json(error);
     console.log(error);
