@@ -1,7 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const talkerData = require('./fsUtils');
-const randomToken = require('./autentications/Tolken');
+const randomToken = require('./autentications/tolken');
+const {
+  validateEmail,
+  validateEmailFormat,
+  validatePassword,
+  validatePasswordFormat,
+} = require('./autentications/validations');
 
 const app = express();
 app.use(bodyParser.json());
@@ -45,9 +51,14 @@ app.get('/talker/:id', async (request, response) => {
   }
 });
 
-app.post('/login', (_request, response) => {
+app.post(
+'/login',
+validateEmail,
+validateEmailFormat,
+validatePassword,
+validatePasswordFormat,
+(_request, response) => {
   try {
-    // const login = request.body;
     const token = randomToken();
     response.status(200).json({ token });
     // console.log(tolken.length);
@@ -55,4 +66,5 @@ app.post('/login', (_request, response) => {
     response.status(400).json(error);
     console.log(error);
   }
-});
+},
+);
