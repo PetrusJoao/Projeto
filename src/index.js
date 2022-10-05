@@ -1,13 +1,25 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const talkerData = require('./fsUtils');
+const { talkerData, writeTalkerData } = require('./fsUtils');
 const randomToken = require('./autentications/tolken');
 const {
   validateEmail,
   validateEmailFormat,
   validatePassword,
   validatePasswordFormat,
-} = require('./autentications/validations');
+} = require('./autentications/loginValidations');
+const { validateToken } = require('./autentications/tokenValidation');
+const {
+  validateName,
+  validateNameFormat,
+  validateAge,
+  validateAgeFormat,
+  validateTalk,
+  validateWatchedAt,
+  validateWatchedAtFormat,
+  validateRate,
+  validateRateFormat,
+} = require('./autentications/talkerValidation');
 
 const app = express();
 app.use(bodyParser.json());
@@ -61,10 +73,27 @@ validatePasswordFormat,
   try {
     const token = randomToken();
     response.status(200).json({ token });
-    // console.log(tolken.length);
   } catch (error) {
     response.status(400).json(error);
     console.log(error);
   }
 },
 );
+
+app.post('/talker',
+validateToken,
+validateName, validateNameFormat,
+validateAge, validateAgeFormat,
+validateTalk,
+validateWatchedAt, validateWatchedAtFormat,
+validateRate, validateRateFormat,
+async (request, response) => {
+  try {
+    // console.log('validateRateFormat');
+    const newTalker = request.body;
+    const writeNewTalker = await writeTalkerData(newTalker);
+    return response.status(201).json(writeNewTalker);    
+  } catch (error) {
+    return response.status(400).json(error);
+  }
+});
