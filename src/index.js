@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { talkerData, writeTalkerData } = require('./fsUtils');
+const { talkerData, writeTalkerData, updateTalkerData } = require('./fsUtils');
 const randomToken = require('./autentications/tolken');
 const {
   validateEmail,
@@ -89,11 +89,30 @@ validateWatchedAt, validateWatchedAtFormat,
 validateRate, validateRateFormat,
 async (request, response) => {
   try {
-    // console.log('validateRateFormat');
     const newTalker = request.body;
     const writeNewTalker = await writeTalkerData(newTalker);
     return response.status(201).json(writeNewTalker);    
   } catch (error) {
     return response.status(400).json(error);
+  }
+});
+
+app.put('/talker/:id',
+validateToken,
+validateName, validateNameFormat,
+validateAge, validateAgeFormat,
+validateTalk,
+validateWatchedAt, validateWatchedAtFormat,
+validateRate, validateRateFormat,
+async (request, response) => {
+  try {    
+    const { id } = request.params;
+    const updatedTalkerData = request.body;
+    await updateTalkerData(Number(id), updatedTalkerData);
+    updatedTalkerData.id = Number(id);
+    response.status(HTTP_OK_STATUS).json(updatedTalkerData);
+  } catch (error) {
+    response.status(400).json(error);
+    console.log(error);
   }
 });

@@ -82,7 +82,7 @@ if (!regexDate.test(watchedAt)) {
 const validateRate = (req, res, next) => {
   const { talk } = req.body;
   const { rate } = talk;  
-if (!rate) {
+if (rate === undefined) {
   res.status(400).json({
   message: 'O campo "rate" é obrigatório',
 });

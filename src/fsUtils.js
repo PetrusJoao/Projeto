@@ -25,4 +25,23 @@ async function writeTalkerData(newTalker) {
   }
 }
 
-module.exports = { talkerData, writeTalkerData };
+async function updateTalkerData(id, updatedTalkerData) {
+  const previousTalkers = await talkerData();
+  const updatedTalker = { id, ...updatedTalkerData };
+  const updatedTalkerList = previousTalkers.reduce((talkerList, currentTalker) => {
+    if (currentTalker.id === updatedTalker.id) return [...talkerList, updatedTalker];
+    return [...talkerList, currentTalker];
+  }, []);
+  console.log(updatedTalkerList);
+  const updatedData = JSON.stringify(updatedTalkerList);
+  
+  try {
+    await fs.writeFile(path.resolve(__dirname, '../src/talker.json'), updatedData);
+    // console.log(updatedData);
+    return updatedData;
+  } catch (error) {
+    console.log(`Erro: ${error}`);
+  }
+}
+
+module.exports = { talkerData, writeTalkerData, updateTalkerData };
