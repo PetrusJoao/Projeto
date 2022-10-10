@@ -1,6 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { talkerData, writeTalkerData, updateTalkerData } = require('./fsUtils');
+const {
+  talkerData,
+  writeTalkerData,
+  updateTalkerData,
+  deleteTalkerData,
+} = require('./fsUtils');
 const randomToken = require('./autentications/tolken');
 const {
   validateEmail,
@@ -111,6 +116,17 @@ async (request, response) => {
     await updateTalkerData(Number(id), updatedTalkerData);
     updatedTalkerData.id = Number(id);
     response.status(HTTP_OK_STATUS).json(updatedTalkerData);
+  } catch (error) {
+    response.status(400).json(error);
+    console.log(error);
+  }
+});
+
+app.delete('/talker/:id', validateToken, async (request, response) => {
+  try {    
+    const { id } = request.params;
+    await deleteTalkerData(Number(id));
+    return response.status(204).end();
   } catch (error) {
     response.status(400).json(error);
     console.log(error);
